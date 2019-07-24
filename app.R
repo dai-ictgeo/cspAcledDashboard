@@ -3,6 +3,8 @@ library(shinythemes)
 library(jsonlite)
 #library(ggplot2)
 library(plotly)
+library(ggrepel)
+library(geomnet)
 library(RColorBrewer)
 library(leaflet)
 library(dplyr)
@@ -19,6 +21,8 @@ library(shinydashboard)
 # ACLED_Data$latitude <- as.double(ACLED_Data$latitude)
 # ACLED_Data$data_id <- as.integer(ACLED_Data$data_id)
 # save(ACLED_Data, file = "data/ACLED_Data.rdata")
+#thirtydays <- Sys.Date() - 30
+#eventslastthirty <- ACLED_Data %>% filter(event_date >= as.Date(thirtydays))     
 
 load(file = "data/ACLED_Data.rdata")
 
@@ -47,7 +51,21 @@ ui <-
              )),
     navbarMenu(
       "Regional Snapshots",
-      tabPanel("Shan"),
+      tabPanel("Shan",
+               h4("30 Day Snapshot: Shan State"),
+               fluidRow(
+                 column(6,
+                        p('Paragraph of latest events'),
+                        hr(),
+                        plotlyOutput("ShanNetwork30Day")
+                        ),
+                 column(6,
+                        leafletOutput("shanLast30Map", height = 600),
+                        plotlyOutput("shanEvents30", height = 200))
+               
+                        )
+               
+               ),
       tabPanel("Rakhine"),
       tabPanel("Kachin")
     ),
@@ -119,7 +137,24 @@ server <- function(input, output) {
       output$lastEvent <- renderText({
         paste(head(ACLED_Data$event_date, 1))
       })
-  
+  ####### SHAN THIRTY DAY SNAPSHOT
+      output$shanLast30Map <- renderLeaflet({
+        leaflet(data = filter(eventslastthirty, admin1 == "Shan")) %>% addTiles(urlTemplate = tcu_map, attribution = map_attr)  %>% addCircleMarkers( ~longitude, ~ latitude, radius = sqrt(ACLED_Data$fatalities))})
+      
+      
+      shanEventsLast30 <- ggplot(data = filter(eventslastthirty, admin1 == "Shan"), aes(event_type)) + geom_bar(fill = "darkblue") + theme_classic() + ggtitle("Total Events Per State")
+      
+      output$shanEvents30 <- renderPlotly({shanEventsLast30})
+      
+      
+      ShanNetworkAnalysis <- ggplot(data = filter(eventslastthirty, admin1 == "Shan"), aes(from_id = actor1, to_id = actor2)) + geom_net(layout.alg = 'fruchtermanreingold', size = 6, labelon = TRUE, ggrepel = TRUE, vjust = -0.8, ecolour = "grey60", directed =FALSE, fontsize = 3, ealpha = 0.5) + theme_net() 
+      
+      ggplotly(ShanNetworkAnalysis)
+      
+      output$ShanNetwork30Day <- renderPlotly({ShanNetworkAnalysis})
+      
+      
+      
   
   ####### STATE LEVEL EVENTS PER YEAR PAGE
   
