@@ -25,6 +25,8 @@ library(shinydashboard)
 #eventslastthirty <- ACLED_Data %>% filter(event_date >= as.Date(thirtydays))     
 
 load(file = "data/ACLED_Data.rdata")
+thirtydays <- Sys.Date() - 30
+eventslastthirty <- ACLED_Data %>% filter(event_date >= as.Date(thirtydays))     
 
 # Define UI for application that draws a histogram
 ui <-
@@ -56,8 +58,7 @@ ui <-
                fluidRow(
                  column(6,
                         p('Paragraph of latest events'),
-                        hr(),
-                        plotlyOutput("ShanNetwork30Day")
+                        hr()                        
                         ),
                  column(6,
                         leafletOutput("shanLast30Map", height = 600),
@@ -147,11 +148,9 @@ server <- function(input, output) {
       output$shanEvents30 <- renderPlotly({shanEventsLast30})
       
       
-      ShanNetworkAnalysis <- ggplot(data = filter(eventslastthirty, admin1 == "Shan"), aes(from_id = actor1, to_id = actor2)) + geom_net(layout.alg = 'fruchtermanreingold', size = 6, labelon = TRUE, ggrepel = TRUE, vjust = -0.8, ecolour = "grey60", directed =FALSE, fontsize = 3, ealpha = 0.5) + theme_net() 
+      # ShanNetworkAnalysis <- ggplot(data = filter(eventslastthirty, admin1 == "Shan"), aes(from_id = actor1, to_id = actor2)) + geom_net(layout.alg = 'fruchtermanreingold', size = 6, labelon = TRUE, ggrepel = TRUE, vjust = -0.8, ecolour = "grey60", directed =FALSE, fontsize = 3, ealpha = 0.5) + theme_net() 
       
-      ggplotly(ShanNetworkAnalysis)
-      
-      output$ShanNetwork30Day <- renderPlotly({ShanNetworkAnalysis})
+      # output$ShanNetwork30Day <- renderPlotly({ShanNetworkAnalysis})
       
       
       
