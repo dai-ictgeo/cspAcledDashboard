@@ -68,8 +68,15 @@ ui <-
         "Source: Armed Conflict Location & Event Project (ACLED) Codebook, 2017, Version 8"
       )
       
-    )
-    
+    ),
+    tags$footer("Data Source: Armed Conflict Location & Event Data Project (ACLED);", tags$a(href = "https://wwww.acleddata.com", "acleddata.com"), align = "left", style = "position:absolute;
+                bottom:0;
+                width:95%;
+                height:50px;
+                color: black;
+                z-index: 1000;"
+    )    
+
   )
 
 

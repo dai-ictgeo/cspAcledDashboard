@@ -5,8 +5,8 @@ account: gamaly
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1047401
-bundleId: 2258874
+bundleId: 2259561
 url: https://gamaly.shinyapps.io/cs3analytics/
-when: 1563910521.86753
+when: 1563930532.59273
 asMultiple: FALSE
 asStatic: FALSE
